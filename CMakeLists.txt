@@ -8,15 +8,15 @@ cmake_minimum_required(VERSION 3.21.0)
 ###########################################################################
 
 # Specify stm32 device
-set(STM32_DEVICE "STM32F439xx")
+set(STM32_DEVICE "STM32G491RETx")
 # Openocd config file for used nucleo board
-set(OPENOCD_CFG "/usr/share/openocd/scripts/board/stm32f429discovery.cfg")
+set(OPENOCD_CFG "/usr/share/openocd/scripts/board/st_nucleo_g4.cfg")
 # Path to linker script file
-set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32F429ZITX_FLASH.ld)
+set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32G491RETX_FLASH.ld)
 # Path to toolchain file
 set(CMAKE_TOOLCHAIN_FILE ${CMAKE_CURRENT_SOURCE_DIR}/toolchain.cmake)
 # Paths to stm32 drivers
-set(PATH_TO_STM32CUBEF4 "vendor/STM32CubeF4" )
+set(PATH_TO_STM32CUBEG4 "vendor/STM32CubeG4" )
 # Path to libtropic
 set(PATH_TO_LIBTROPIC "../../../")
 
@@ -50,35 +50,36 @@ project(stm32_example LANGUAGES C ASM)
 # Specify other source files
 set(SOURCES ${SOURCES}
     Src/main.c
-    Src/stm32f4xx_it.c
-    Src/stm32f4xx_hal_msp.c
-    Src/system_stm32f4xx.c
-    System/Startup/startup_stm32f429zitx.s
+    Src/stm32g4xx_it.c
+    Src/stm32g4xx_hal_msp.c
+    Src/system_stm32g4xx.c
+    System/Startup/startup_stm32g491retx.s
     System/User/syscalls.c
     System/User/sysmem.c
     ${PATH_TO_LIBTROPIC}/hal/port/stm32/lt_port_stm32.c
-    # Sources related to STM32f439ZInucleo board
-    ${PATH_TO_STM32CUBEF4}/Drivers/BSP/STM32F4xx_Nucleo_144/stm32f4xx_nucleo_144.c
+    # Sources related to STM32g491ZInucleo board
+    ${PATH_TO_STM32CUBEG4}/Drivers/BSP/STM32G4xx_Nucleo/stm32g4xx_nucleo.c
     # Sources for HAL functionalities used in this example
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rng.c
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal.c
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rcc.c
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_pwr_ex.c
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_gpio.c
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_cortex.c
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_spi.c
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rng.c
 )
 
 # Find all HAL header files
-file(GLOB_RECURSE HAL_HEADERS ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Inc/*.h)
+file(GLOB_RECURSE HAL_HEADERS ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Inc/*.h)
 
 set(HEADERS
     Inc/main.h
-    Inc/stm32f4xx_hal_conf.h
-    Inc/stm32f4xx_it.h
+    Inc/stm32g4xx_hal_conf.h
+    Inc/stm32g4xx_it.h
+    Inc/stm32g4xx_nucleo_conf.h
     # BSP header file
-    ${PATH_TO_STM32CUBEF4}/Drivers/BSP/STM32F4xx_Nucleo_144/stm32f4xx_nucleo_144.h
+    ${PATH_TO_STM32CUBEG4}/Drivers/BSP/STM32G4xx_Nucleo/stm32g4xx_nucleo.h
     # HAL headers
     ${HAL_HEADERS}
 )
@@ -86,10 +87,10 @@ set(HEADERS
 # Include path for directories containing header files
 include_directories(
     Inc/
-    ${PATH_TO_STM32CUBEF4}/Drivers/BSP/STM32F4xx_Nucleo_144/
-    ${PATH_TO_STM32CUBEF4}/Drivers/CMSIS/Device/ST/STM32F4xx/Include/
-    ${PATH_TO_STM32CUBEF4}/Drivers/STM32F4xx_HAL_Driver/Inc/
-    ${PATH_TO_STM32CUBEF4}/Drivers/CMSIS/Core/Include/
+    ${PATH_TO_STM32CUBEG4}/Drivers/BSP/STM32G4xx_Nucleo/
+    ${PATH_TO_STM32CUBEG4}/Drivers/CMSIS/Device/ST/STM32G4xx/Include/
+    ${PATH_TO_STM32CUBEG4}/Drivers/STM32G4xx_HAL_Driver/Inc/
+    ${PATH_TO_STM32CUBEG4}/Drivers/CMSIS/Core/Include/
 )
 
 
